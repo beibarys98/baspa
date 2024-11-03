@@ -67,86 +67,11 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if(Yii::$app->user->isGuest){
-            return $this->redirect(['/site/login']);
+        if(Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
         }
 
-        if(Admin::findOne(Yii::$app->user->identity->id)){
-            return $this->redirect(['/test/index']);
-        }
-
-        //find the teacher
-        $teacher = Teacher::findOne(['user_id' => Yii::$app->user->id]);
-
-        //not a newbie? show the test
-        if($teacher->test_id){
-            $test = Test::findOne($teacher->test_id);
-        }
-
-        //newbie? the next version
-        else {
-            //how many versions of the test
-            $availableVersions = Test::find()
-                ->andWhere(['subject_id' => $teacher->subject_id])
-                ->andWhere(['language' => $teacher->language])
-                ->andWhere(['status' => 'public'])
-                ->select(['version'])
-                ->orderBy('version')
-                ->asArray()
-                ->all();
-
-            //no versions? show null
-            if(!$availableVersions){
-                return $this->render('index-null');
-            }
-
-            //there are? give the newbie the next version
-            $versions = array_column($availableVersions, 'version');
-            $testIds = Test::find()
-                ->andWhere(['subject_id' => $teacher->subject_id])
-                ->andWhere(['language' => $teacher->language])
-                ->andWhere(['status' => 'public'])
-                ->select('id')
-                ->column();
-            $testTakerCount = Teacher::find()
-                ->andWhere(['test_id' => $testIds])
-                ->count();
-            $nextVersionIndex = $testTakerCount % count($versions);
-            $nextVersion = $versions[$nextVersionIndex];
-
-            $test = Test::find()
-                ->andWhere(['subject_id' => $teacher->subject_id])
-                ->andWhere(['language' => $teacher->language])
-                ->andWhere(['version' => $nextVersion])
-                ->one();
-
-            $teacher->test_id = $test->id;
-            $teacher->save();
-        }
-
-        //find the certificate
-        $certificate = new ActiveDataProvider([
-            'query' => File::find()
-                ->andWhere(['teacher_id' => $teacher->id])
-                ->andWhere(['test_id' => $test->id])
-                ->andWhere(['type' => 'certificate'])
-        ]);
-
-        //is the test active? and was it paid?
-        $isActive = $test->status == 'public' && !$teacher->end_time;
-
-        $hasPaid = File::find()
-            ->andWhere(['teacher_id' => $teacher->id])
-            ->andWhere(['test_id' => $test->id])
-            ->andWhere(['type' => 'receipt'])
-            ->one();
-
-        return $this->render('index', [
-            'test' => $test,
-            'certificate' => $certificate,
-            'isActive' => $isActive,
-            'hasPaid' => $hasPaid
-        ]);
+        return $this->render('index');
     }
 
     public function actionPay($id){

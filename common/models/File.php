@@ -18,6 +18,7 @@ use Yii;
  */
 class File extends \yii\db\ActiveRecord
 {
+    public $receipt;
     public $file;
 
     /**
@@ -34,7 +35,8 @@ class File extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pdf'],
+            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'docx'],
+            [['receipt'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pdf'],
 
             [['teacher_id', 'test_id', 'type', 'path'], 'required'],
             [['teacher_id', 'test_id'], 'integer'],
