@@ -32,7 +32,7 @@ AppAsset::register($this);
 <header>
     <?php
     NavBar::begin([
-        'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px; margin-right:10px;']) . Yii::t('app', Yii::$app->name),
+        'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px; margin-right:10px;']) . Yii::t('app', 'Baspa'),
         'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/test/index') : Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm'
@@ -42,9 +42,9 @@ AppAsset::register($this);
 
     if(Admin::findOne(Yii::$app->user->id)){
         $menuItems[] = ['label' => 'Мұғалімдер', 'url' => ['/teacher/index']];
-        $menuItems[] = ['label' => 'Пәндер', 'url' => ['/subject/index']];
-        $menuItems[] = ['label' => 'Тесттер', 'url' => ['/test/index']];
-        $menuItems[] = ['label' => 'Баптаулар', 'url' => ['/test/settings/']];
+        $menuItems[] = ['label' => 'BB', 'url' => ['/bb/index']];
+        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/adistemelik/index']];
+        $menuItems[] = ['label' => 'Seminar', 'url' => ['/seminar/index/']];
     }
 
     echo Nav::widget([
@@ -52,19 +52,7 @@ AppAsset::register($this);
         'items' => $menuItems,
     ]);
 
-    if (Yii::$app->user->isGuest) {
-        echo Html::tag('div', Html::a( Html::img(
-            Yii::$app->language === 'kz-KZ'
-                ? '/images/kz.png'
-                : '/images/ru.png',
-            ['alt' => Yii::$app->language === 'kz-KZ' ? 'Қазақша' : 'Русский', 'style' => 'width:32px;height:32px;', 'class' => 'rounded']
-        ),
-            ['/site/language', 'view' => '/site/login'],
-            ['class' => ['btn btn-link login text-decoration-none']]
-        ),
-            ['class' => ['d-flex']]
-        );
-    } else {
+    if (!Yii::$app->user->isGuest) {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
             . Html::submitButton(
                 Yii::t('app', 'Выйти') . ' (' . Yii::$app->user->identity->username . ')',
@@ -72,17 +60,6 @@ AppAsset::register($this);
                     'style' => 'color: black']
             )
             . Html::endForm();
-        echo Html::tag('div', Html::a( Html::img(
-            Yii::$app->language === 'kz-KZ'
-                ? '/images/kz.png'
-                : '/images/ru.png',
-            ['alt' => Yii::$app->language === 'kz-KZ' ? 'Қазақша' : 'Русский', 'style' => 'width:32px;height:32px;', 'class' => 'rounded']
-        ),
-            ['/site/language', 'view' => '/site/index'],
-            ['class' => ['btn btn-link login text-decoration-none']]
-        ),
-            ['class' => ['d-flex']]
-        );
     }
     NavBar::end();
     ?>

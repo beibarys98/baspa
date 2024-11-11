@@ -71,7 +71,15 @@ class SiteController extends Controller
             return $this->redirect(['site/login']);
         }
 
+        if(Admin::findOne(Yii::$app->user->identity->id) != null) {
+            return $this->redirect(['admin']);
+        }
+
         return $this->render('index');
+    }
+
+    public function actionAdmin(){
+        return $this->render('admin');
     }
 
     public function actionPay($id){

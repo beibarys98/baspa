@@ -7,6 +7,6 @@
 ?>
 <div class="site-index">
 
-    index
+    admin
 
 </div>
