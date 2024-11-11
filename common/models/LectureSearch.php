@@ -4,23 +4,21 @@ namespace common\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Teacher;
+use common\models\Lecture;
 
 /**
- * TeacherSearch represents the model behind the search form of `common\models\Teacher`.
+ * LectureSearch represents the model behind the search form of `common\models\Lecture`.
  */
-class TeacherSearch extends Teacher
+class LectureSearch extends Lecture
 {
-    public $lecture_title;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'lecture_id'], 'integer'],
-            [['name', 'organization', 'lecture_title'], 'safe'],
+            [['id'], 'integer'],
+            [['title', 'type', 'alghys', 'qurmet', 'sertifikat'], 'safe'],
         ];
     }
 
@@ -42,20 +40,12 @@ class TeacherSearch extends Teacher
      */
     public function search($params)
     {
-        $query = Teacher::find();
+        $query = Lecture::find();
 
-        $query->joinWith('lecture');
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => [
-                'attributes' => [
-                    'id',
-                    'name',
-                    'organization',
-                    'lecture_title',
-                ],
-            ]
         ]);
 
         $this->load($params);
@@ -68,12 +58,14 @@ class TeacherSearch extends Teacher
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'teacher.id' => $this->id,
+            'id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['like', 'teacher.name', $this->name])
-            ->andFilterWhere(['like', 'teacher.organization', $this->organization])
-            ->andFilterWhere(['like', 'lecture.title', $this->lecture_title]);
+        $query->andFilterWhere(['like', 'title', $this->title])
+            ->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'alghys', $this->alghys])
+            ->andFilterWhere(['like', 'qurmet', $this->qurmet])
+            ->andFilterWhere(['like', 'sertifikat', $this->sertifikat]);
 
         return $dataProvider;
     }

@@ -28,7 +28,8 @@
         "smalot/pdfparser": "^2.11",
         "kartik-v/yii2-mpdf": "*",
       "ext-libxml": "*",
-      "ext-gd": "*"
+      "ext-gd": "*",
+      "ext-json": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

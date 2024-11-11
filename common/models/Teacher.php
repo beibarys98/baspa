@@ -5,23 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "teacher".
+ * This is the model class for table "{{%teacher}}".
  *
  * @property int $id
- * @property int $user_id
  * @property string $name
- * @property string $school
+ * @property string|null $organization
+ * @property int|null $lecture_id
+ *
+ * @property Lecture $lecture
  */
 class Teacher extends \yii\db\ActiveRecord
 {
-    public $password;
+    public $file;
 
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'teacher';
+        return '{{%teacher}}';
     }
 
     /**
@@ -30,15 +32,12 @@ class Teacher extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'name', 'school'], 'required'],
-            [['user_id'], 'integer'],
-            [['name', 'school'], 'string', 'max' => 255],
+            [['name', 'organization', 'lecture_id'], 'required'],
+            [['lecture_id'], 'integer'],
+            [['name', 'organization'], 'string', 'max' => 255],
+            [['lecture_id'], 'exist', 'skipOnError' => true, 'targetClass' => Lecture::class, 'targetAttribute' => ['lecture_id' => 'id']],
 
-            ['name', 'match', 'pattern' => '/^[А-ЯЁӘІҢҒҮҰҚӨҺа-яёәіңғүұқөһ\s]+$/u', 'message' => Yii::t('app', 'Имя может содержать только кириллицу!')],
-            ['name', 'match', 'pattern' => '/^[^\s]/', 'message' => Yii::t('app', 'Имя не может начинаться с пробела!')],
-            ['name', 'match', 'pattern' => '/\s/', 'message' => Yii::t('app', 'Имя должно содержать минимум два слова!')],
-
-            ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'docx'],
         ];
     }
 
@@ -49,18 +48,28 @@ class Teacher extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'user_id' => Yii::t('app', 'User ID'),
             'name' => Yii::t('app', 'Name'),
-            'school' => Yii::t('app', 'School'),
+            'organization' => Yii::t('app', 'Organization'),
+            'lecture_id' => Yii::t('app', 'Lecture ID'),
         ];
     }
 
     /**
+     * Gets query for [[Lecture]].
+     *
+     * @return \yii\db\ActiveQuery|LectureQuery
+     */
+    public function getLecture()
+    {
+        return $this->hasOne(Lecture::class, ['id' => 'lecture_id']);
+    }
+
+    /**
      * {@inheritdoc}
-     * @return \common\models\query\TeacherQuery the active query used by this AR class.
+     * @return TeacherQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \common\models\query\TeacherQuery(get_called_class());
+        return new TeacherQuery(get_called_class());
     }
 }

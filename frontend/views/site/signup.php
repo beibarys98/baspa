@@ -22,7 +22,7 @@ $this->title = 'Signup';
 
             <?= $form->field($teacher, 'name')->textInput(['placeholder' => 'Имя'])->label(false) ?>
 
-            <?= $form->field($teacher, 'school')->textInput(['placeholder' => 'Организация'])->label(false) ?>
+            <?= $form->field($teacher, 'organization')->textInput(['placeholder' => 'Организация'])->label(false) ?>
 
             <?= $form->field($user, 'password')->passwordInput(['placeholder' => 'Пароль'])->label(false) ?>
 

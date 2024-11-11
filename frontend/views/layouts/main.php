@@ -41,10 +41,10 @@ AppAsset::register($this);
     $menuItems = [];
 
     if(Admin::findOne(Yii::$app->user->id)){
-        $menuItems[] = ['label' => 'Мұғалімдер', 'url' => ['/teacher/index']];
-        $menuItems[] = ['label' => 'BB', 'url' => ['/bb/index']];
-        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/adistemelik/index']];
-        $menuItems[] = ['label' => 'Seminar', 'url' => ['/seminar/index/']];
+        $menuItems[] = ['label' => 'Teachers', 'url' => ['/teacher/index']];
+        $menuItems[] = ['label' => 'BB', 'url' => ['/lecture/bb']];
+        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/lecture/adistemelik']];
+        $menuItems[] = ['label' => 'Seminar', 'url' => ['/lecture/seminar']];
     }
 
     echo Nav::widget([
