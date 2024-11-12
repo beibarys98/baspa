@@ -95,7 +95,7 @@ class TeacherController extends Controller
                 }
 
                 if($id){
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['lecture/view', 'id' => $id]);
                 }
 
                 return $this->redirect(['index']);

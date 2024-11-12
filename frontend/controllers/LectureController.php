@@ -7,6 +7,7 @@ use common\models\Lecture;
 use common\models\LectureSearch;
 use common\models\Teacher;
 use common\models\TeacherSearch;
+use PhpOffice\PhpWord\PhpWord;
 use Yii;
 use yii\web\Controller;
 use yii\web\HttpException;
@@ -166,7 +167,7 @@ class LectureController extends Controller
             throw new HttpException(500, 'Could not create ZIP file.');
         }
         foreach ($filePaths as $filePath) {
-            $realPath = Yii::getAlias('@webroot') . '/' . $filePath;
+            $realPath = Yii::getAlias('@webroot/') . $filePath->path;
             if (file_exists($realPath)) {
                 $zip->addFile($realPath, basename($realPath));
             } else {
@@ -181,40 +182,53 @@ class LectureController extends Controller
 
     public function actionJournal($id)
     {
-        //save results in pdf
-        $results = new ActiveDataProvider([
-            'query' => Result::find()
-                ->select(['teacher_id', 'result'])
-                ->andWhere(['test_id' => $id])
-                ->groupBy(['teacher_id', 'result']) // Group by both teacher ID and result
-                ->orderBy(['result' => SORT_DESC]), // Sort by result
-            'pagination' => [
-                'pageSize' => false,
-            ],
-        ]);
+        $phpWord = new PhpWord();
 
-        $content2 = $this->renderPartial('journal', [
-            'results' => $results,
-        ]);
-        $pdf2 = new Pdf([
-            'mode' => Pdf::MODE_UTF8,
-            'content' => $content2,
-            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-            'cssInline' => '.kv-heading-1{font-size:18px}',
-            'filename' => 'Нәтиже.pdf',
-        ]);
-        $pdf2Output = $pdf2->render();
-        $pdfFilePath2 = Yii::getAlias('@webroot/journals/')
-            . Yii::$app->security->generateRandomString(8)
-            . '.pdf';
-        file_put_contents($pdfFilePath2, $pdf2Output);
+        $section = $phpWord->addSection();
 
-        $result_pdf = new ResultPdf();
-        $result_pdf->test_id = $id;
-        $result_pdf->path = $pdfFilePath2; // Use the path for the Excel file
-        $result_pdf->save(false);
+        $tableStyle = [
+            'borderSize' => 6,
+            'borderColor' => '000000',
+            'cellMargin' => 50,
+            'width' => 100,
+            'tableLayout' => 'auto',
+        ];
+        $cellStyle = [
+            'valign' => 'center',
+        ];
+        $phpWord->addTableStyle('TeacherTable', $tableStyle);
 
-        return Yii::$app->response->sendFile($result_pdf->path);
+        $table = $section->addTable('TeacherTable');
+
+        $table->addRow();
+        $table->addCell(2000)->addText('Name');
+        $table->addCell(2000)->addText('Organization');
+        $table->addCell(2000)->addText('Alghys');
+        $table->addCell(2000)->addText('Qurmet');
+        $table->addCell(2000)->addText('Sertifikat');
+
+        $lecture = Lecture::findOne($id);
+        $teachers = Teacher::find()->andWhere(['lecture_id' => $id])->all();
+
+        foreach ($teachers as $teacher) {
+            $formattedId = str_pad($teacher->id, 5, '0', STR_PAD_LEFT);
+            $alghysCell = $lecture && $lecture->alghys ? $formattedId : '';
+            $qurmetCell = $lecture && $lecture->qurmet ? $formattedId : '';
+            $sertifikatCell = $lecture && $lecture->sertifikat ? $formattedId : '';
+
+            $table->addRow();
+            $table->addCell(2000)->addText($teacher->name);
+            $table->addCell(2000)->addText($teacher->organization);
+            $table->addCell(2000)->addText($alghysCell);
+            $table->addCell(2000)->addText($qurmetCell);
+            $table->addCell(2000)->addText($sertifikatCell);
+        }
+
+        $fileName = 'TeacherReport.docx';
+        $tempFilePath = Yii::getAlias('@webroot/uploads/' . $fileName);
+        $phpWord->save($tempFilePath, 'Word2007');
+
+        return Yii::$app->response->sendFile($tempFilePath);
     }
 
     public function actionUpdate($id)
