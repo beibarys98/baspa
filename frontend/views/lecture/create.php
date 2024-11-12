@@ -1,20 +1,31 @@
 <?php
 
 use yii\helpers\Html;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\Lecture $model */
-
-$this->title = Yii::t('app', 'Create Lecture');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Lectures'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+/** @var yii\widgets\ActiveForm $form */
 ?>
-<div class="lecture-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="bb-form">
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'alghys')->fileInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'qurmet')->fileInput(['maxlength' => true])->label($model->type == 'seminar' ? 'Diplom' : 'Qurmet') ?>
+
+    <?php if($model->type == 'seminar'): ?>
+        <?= $form->field($model, 'sertifikat')->fileInput(['maxlength' => true]) ?>
+    <?php endif; ?>
+
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 
 </div>

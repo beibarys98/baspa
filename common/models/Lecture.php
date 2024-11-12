@@ -32,7 +32,26 @@ class Lecture extends \yii\db\ActiveRecord
         return [
             [['title', 'type'], 'required'],
             [['title', 'type', 'alghys', 'qurmet', 'sertifikat'], 'string', 'max' => 255],
+
+            ['alghys', 'validateFileUpload'],
+            ['qurmet', 'validateFileUpload'],
+            ['sertifikat', 'validateFileUpload'],
         ];
+    }
+
+    public function validateFileUpload($attribute, $params)
+    {
+        // Check if any file is uploaded in the fields
+        $uploadedFiles = array_filter([
+            $this->alghys,
+            $this->qurmet,
+            $this->sertifikat,
+        ]);
+
+        // If more than one file is uploaded, add an error
+        if (count($uploadedFiles) > 1) {
+            $this->addError($attribute, 'You can only upload a file to one of the fields: Alghys, Qurmet, or Sertifikat.');
+        }
     }
 
     /**

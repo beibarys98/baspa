@@ -1,6 +1,7 @@
 <?php
 
 use common\models\Teacher;
+use yii\bootstrap5\LinkPager;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -27,6 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'pager' => [
+            'class' => LinkPager::class,
+        ],
         'columns' => [
             'id',
             'name',
@@ -37,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::className(),
+                'template' => '{update} <span style="margin-left: 15px;"></span> {delete}',
                 'urlCreator' => function ($action, Teacher $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }

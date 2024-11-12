@@ -68,9 +68,13 @@ class TeacherController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
         $model = new Teacher();
+
+        if($id){
+            $model->lecture_id = $id;
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -88,6 +92,10 @@ class TeacherController extends Controller
                     $model->file->saveAs($filePath);
                     $data = $this->parseDocx($filePath);
                     $this->storeTeacherData($data, $model->lecture_id);
+                }
+
+                if($id){
+                    return $this->redirect(['view', 'id' => $model->id]);
                 }
 
                 return $this->redirect(['index']);

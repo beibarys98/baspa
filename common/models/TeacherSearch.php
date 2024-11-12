@@ -53,7 +53,10 @@ class TeacherSearch extends Teacher
                     'id',
                     'name',
                     'organization',
-                    'lecture_title',
+                    'lecture_title' => [
+                        'asc' => ['lecture.title' => SORT_ASC],
+                        'desc' => ['lecture.title' => SORT_DESC]
+                    ],
                 ],
             ]
         ]);
@@ -64,6 +67,10 @@ class TeacherSearch extends Teacher
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+
+        if (isset($params['lectureId'])) {
+            $query->andWhere(['lecture.id' => $params['lectureId']]);
         }
 
         // grid filtering conditions

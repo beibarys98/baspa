@@ -7,6 +7,6 @@
 ?>
 <div class="site-index">
 
-    admin
+    <h1 class="text-center" style="margin-top: 200px;">As salamu aleikum, admin!</h1>
 
 </div>

@@ -33,7 +33,7 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px; margin-right:10px;']) . Yii::t('app', 'Baspa'),
-        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/test/index') : Yii::$app->homeUrl,
+        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/site/admin') : Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm'
         ],
@@ -42,9 +42,9 @@ AppAsset::register($this);
 
     if(Admin::findOne(Yii::$app->user->id)){
         $menuItems[] = ['label' => 'Teachers', 'url' => ['/teacher/index']];
-        $menuItems[] = ['label' => 'BB', 'url' => ['/lecture/bb']];
-        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/lecture/adistemelik']];
-        $menuItems[] = ['label' => 'Seminar', 'url' => ['/lecture/seminar']];
+        $menuItems[] = ['label' => 'BB', 'url' => ['/lecture/index', 'type' => 'bb']];
+        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/lecture/index', 'type' => 'adistemelik']];
+        $menuItems[] = ['label' => 'Seminar', 'url' => ['/lecture/index', 'type' => 'seminar']];
     }
 
     echo Nav::widget([

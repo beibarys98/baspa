@@ -1,23 +1,27 @@
 <?php
 
 use yii\helpers\Html;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\Teacher $model */
-
-$this->title = Yii::t('app', 'Update Teacher: {name}', [
-    'name' => $model->name,
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Teachers'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+/** @var yii\widgets\ActiveForm $form */
 ?>
-<div class="teacher-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="teacher-form">
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'organization')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'lecture_id')->textInput() ?>
+
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 
 </div>
