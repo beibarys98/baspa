@@ -1,13 +1,15 @@
 <?php
 
-namespace common\models;
+namespace common\models\query;
+
+use common\models\Lecture;
 
 /**
- * This is the ActiveQuery class for [[Teacher]].
+ * This is the ActiveQuery class for [[Lecture]].
  *
- * @see Teacher
+ * @see Lecture
  */
-class TeacherQuery extends \yii\db\ActiveQuery
+class LectureQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +18,7 @@ class TeacherQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return Teacher[]|array
+     * @return Lecture[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +27,7 @@ class TeacherQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return Teacher|array|null
+     * @return Lecture|array|null
      */
     public function one($db = null)
     {

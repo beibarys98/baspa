@@ -2,23 +2,17 @@
 
 namespace frontend\controllers;
 
+use common\models\search\TeacherSearch;
 use common\models\Teacher;
-use common\models\TeacherSearch;
 use PhpOffice\PhpWord\IOFactory;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
-/**
- * TeacherController implements the CRUD actions for Teacher model.
- */
 class TeacherController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
@@ -34,11 +28,6 @@ class TeacherController extends Controller
         );
     }
 
-    /**
-     * Lists all Teacher models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new TeacherSearch();
@@ -50,12 +39,6 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Teacher model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id)
     {
         return $this->render('view', [
@@ -63,11 +46,6 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Teacher model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate($id)
     {
         $model = new Teacher();
@@ -82,7 +60,7 @@ class TeacherController extends Controller
                 $model->file = UploadedFile::getInstance($model, 'file');
 
                 if($model->file){
-                    $directory = 'teachers/' . $model->lecture->type;
+                    $directory = 'uploads/';
                     if (!is_dir($directory)) {
                         mkdir($directory, 0755, true);
                     }
@@ -92,6 +70,7 @@ class TeacherController extends Controller
                     $model->file->saveAs($filePath);
                     $data = $this->parseDocx($filePath);
                     $this->storeTeacherData($data, $model->lecture_id);
+                    unlink($filePath);
                 }
 
                 if($id){
@@ -124,43 +103,21 @@ class TeacherController extends Controller
                     foreach ($element->getRows() as $row) {
                         $cells = $row->getCells();
 
-                        if (count($cells) == 2) {
-                            // Accessing the first cell (name)
-                            $cell0 = $cells[0];
-                            $name = '';
+                        if (count($cells) == 3) { // Ensure the row has three cells
+                            // Access and extract text from the first cell (name)
+                            $name = $this->extractCellText($cells[0]);
 
-                            // Extract text from the first cell (if it contains TextRun elements)
-                            foreach ($cell0->getElements() as $cellElement) {
-                                if ($cellElement instanceof \PhpOffice\PhpWord\Element\TextRun) {
-                                    // Iterate through the Text elements within the TextRun
-                                    foreach ($cellElement->getElements() as $textElement) {
-                                        if ($textElement instanceof \PhpOffice\PhpWord\Element\Text) {
-                                            $name .= $textElement->getText(); // Append the text to $name
-                                        }
-                                    }
-                                }
-                            }
+                            // Access and extract text from the second cell (organization)
+                            $organization = $this->extractCellText($cells[1]);
 
-                            // Accessing the second cell (organization)
-                            $cell1 = $cells[1];
-                            $organization = '';
+                            // Access and extract text from the third cell (certificate)
+                            $certificate = $this->extractCellText($cells[2]);
 
-                            // Extract text from the second cell (if it contains TextRun elements)
-                            foreach ($cell1->getElements() as $cellElement) {
-                                if ($cellElement instanceof \PhpOffice\PhpWord\Element\TextRun) {
-                                    // Iterate through the Text elements within the TextRun
-                                    foreach ($cellElement->getElements() as $textElement) {
-                                        if ($textElement instanceof \PhpOffice\PhpWord\Element\Text) {
-                                            $organization .= $textElement->getText(); // Append the text to $organization
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Store the name and organization in the $data array
+                            // Store the extracted data
                             $data[] = [
                                 'name' => $name,
                                 'organization' => $organization,
+                                'certificate' => $certificate,
                             ];
                         }
                     }
@@ -171,26 +128,34 @@ class TeacherController extends Controller
         return $data;
     }
 
+    private function extractCellText($cell)
+    {
+        $text = '';
+        foreach ($cell->getElements() as $cellElement) {
+            if ($cellElement instanceof \PhpOffice\PhpWord\Element\TextRun) {
+                foreach ($cellElement->getElements() as $textElement) {
+                    if ($textElement instanceof \PhpOffice\PhpWord\Element\Text) {
+                        $text .= $textElement->getText();
+                    }
+                }
+            }
+        }
+        return $text;
+    }
+
     public function storeTeacherData($data, $lecture_id)
     {
         foreach ($data as $item) {
             $teacher = new Teacher();
             $teacher->name = $item['name'];
             $teacher->organization = $item['organization'];
+            $teacher->certificate = $item['certificate'];
             $teacher->lecture_id = $lecture_id;
 
             $teacher->save(false);
         }
     }
 
-
-    /**
-     * Updates an existing Teacher model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -204,13 +169,6 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Teacher model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -218,13 +176,6 @@ class TeacherController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Teacher model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Teacher the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id)
     {
         if (($model = Teacher::findOne(['id' => $id])) !== null) {

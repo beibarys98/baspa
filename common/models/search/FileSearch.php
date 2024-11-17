@@ -1,15 +1,15 @@
 <?php
 
-namespace common\models;
+namespace common\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Lecture;
+use common\models\File;
 
 /**
- * LectureSearch represents the model behind the search form of `common\models\Lecture`.
+ * FileSearch represents the model behind the search form of `common\models\File`.
  */
-class LectureSearch extends Lecture
+class FileSearch extends File
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class LectureSearch extends Lecture
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['title', 'type', 'alghys', 'qurmet', 'sertifikat'], 'safe'],
+            [['id', 'lecture_id', 'teacher_id'], 'integer'],
+            [['type', 'path'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class LectureSearch extends Lecture
      */
     public function search($params)
     {
-        $query = Lecture::find();
+        $query = File::find();
 
         // add conditions that should always apply here
 
@@ -59,13 +59,12 @@ class LectureSearch extends Lecture
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'lecture_id' => $this->lecture_id,
+            'teacher_id' => $this->teacher_id,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'type', $this->type])
-            ->andFilterWhere(['like', 'alghys', $this->alghys])
-            ->andFilterWhere(['like', 'qurmet', $this->qurmet])
-            ->andFilterWhere(['like', 'sertifikat', $this->sertifikat]);
+        $query->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'path', $this->path]);
 
         return $dataProvider;
     }

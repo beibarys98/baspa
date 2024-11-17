@@ -2,20 +2,10 @@
 
 namespace frontend\controllers;
 
-use common\models\File;
-use common\models\Purpose;
 use common\models\Admin;
-use common\models\Question;
 use common\models\Teacher;
-use common\models\TeacherAnswer;
-use common\models\TeacherResult;
-use common\models\Test;
 use common\models\User;
-use kartik\mpdf\Pdf;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -72,14 +62,10 @@ class SiteController extends Controller
         }
 
         if(Admin::findOne(Yii::$app->user->identity->id) != null) {
-            return $this->redirect(['admin']);
+            return $this->redirect(['teacher/index']);
         }
 
         return $this->render('index');
-    }
-
-    public function actionAdmin(){
-        return $this->render('admin');
     }
 
     public function actionPay($id){

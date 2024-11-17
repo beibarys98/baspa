@@ -33,7 +33,7 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px; margin-right:10px;']) . Yii::t('app', 'Baspa'),
-        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/site/admin') : Yii::$app->homeUrl,
+        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/teacher/index') : Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm'
         ],
@@ -41,14 +41,19 @@ AppAsset::register($this);
     $menuItems = [];
 
     if(Admin::findOne(Yii::$app->user->id)){
-        $menuItems[] = ['label' => 'Teachers', 'url' => ['/teacher/index']];
         $menuItems[] = ['label' => 'BB', 'url' => ['/lecture/index', 'type' => 'bb']];
         $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/lecture/index', 'type' => 'adistemelik']];
         $menuItems[] = ['label' => 'Seminar', 'url' => ['/lecture/index', 'type' => 'seminar']];
+        $menuItems[] = ['label' => 'Seminar_Plat', 'url' => ['/lecture/index', 'type' => 'seminar_plat']];
+        $menuItems[] = ['label' => 'Adistemelik_Qural', 'url' => ['/lecture/index', 'type' => 'adistemelik_qural']];
+        $menuItems[] = ['label' => 'Digital_Orta', 'url' => ['/lecture/index', 'type' => 'digital_orta']];
+        $menuItems[] = ['label' => 'MKSH', 'url' => ['/lecture/index', 'type' => 'mksh']];
+        $menuItems[] = ['label' => 'Ped_Sholu', 'url' => ['/lecture/index', 'type' => 'ped_sholu']];
+        $menuItems[] = ['label' => 'Site', 'url' => ['/lecture/index', 'type' => 'site']];
     }
 
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
+        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0 ms-2'],
         'items' => $menuItems,
     ]);
 

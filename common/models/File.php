@@ -5,24 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%certificate}}".
+ * This is the model class for table "{{%file}}".
  *
  * @property int $id
  * @property int $lecture_id
  * @property int $teacher_id
+ * @property string $type
  * @property string $path
  *
  * @property Lecture $lecture
  * @property Teacher $teacher
  */
-class Certificate extends \yii\db\ActiveRecord
+class File extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%certificate}}';
+        return '{{%file}}';
     }
 
     /**
@@ -31,9 +32,9 @@ class Certificate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lecture_id', 'teacher_id', 'path'], 'required'],
+            [['lecture_id', 'teacher_id', 'type', 'path'], 'required'],
             [['lecture_id', 'teacher_id'], 'integer'],
-            [['path'], 'string', 'max' => 255],
+            [['type', 'path'], 'string', 'max' => 255],
             [['lecture_id'], 'exist', 'skipOnError' => true, 'targetClass' => Lecture::class, 'targetAttribute' => ['lecture_id' => 'id']],
             [['teacher_id'], 'exist', 'skipOnError' => true, 'targetClass' => Teacher::class, 'targetAttribute' => ['teacher_id' => 'id']],
         ];
@@ -48,6 +49,7 @@ class Certificate extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'lecture_id' => Yii::t('app', 'Lecture ID'),
             'teacher_id' => Yii::t('app', 'Teacher ID'),
+            'type' => Yii::t('app', 'Type'),
             'path' => Yii::t('app', 'Path'),
         ];
     }
@@ -74,10 +76,10 @@ class Certificate extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return \common\models\query\CertificateQuery the active query used by this AR class.
+     * @return \common\models\query\FileQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \common\models\query\CertificateQuery(get_called_class());
+        return new \common\models\query\FileQuery(get_called_class());
     }
 }

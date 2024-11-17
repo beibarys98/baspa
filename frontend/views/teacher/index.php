@@ -2,13 +2,14 @@
 
 use common\models\Teacher;
 use yii\bootstrap5\LinkPager;
-use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
-/** @var common\models\TeacherSearch $searchModel */
+/** @var \common\models\search\TeacherSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Teachers');

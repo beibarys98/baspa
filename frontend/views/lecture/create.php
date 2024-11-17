@@ -14,12 +14,18 @@ use yii\bootstrap5\ActiveForm;
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'alghys')->fileInput(['maxlength' => true]) ?>
+    <?php if (!in_array($model->type, ['adistemelik_qural', 'digital_orta', 'mksh'])):?>
 
-    <?= $form->field($model, 'qurmet')->fileInput(['maxlength' => true])->label($model->type == 'seminar' ? 'Diplom' : 'Qurmet') ?>
+        <?= $form->field($model, 'alghys')->fileInput(['maxlength' => true]) ?>
 
-    <?php if($model->type == 'seminar'): ?>
+        <?= $form->field($model, 'qurmet')->fileInput(['maxlength' => true])->label(in_array($model->type, ['seminar', 'seminar_plat', 'mksh']) ? 'Diplom' : 'Qurmet') ?>
+
+    <?php endif; ?>
+
+    <?php if (in_array($model->type, ['seminar', 'seminar_plat'])): ?>
+
         <?= $form->field($model, 'sertifikat')->fileInput(['maxlength' => true]) ?>
+
     <?php endif; ?>
 
     <div class="form-group">

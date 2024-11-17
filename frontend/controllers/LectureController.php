@@ -2,17 +2,18 @@
 
 namespace frontend\controllers;
 
-use common\models\Certificate;
+use common\models\File;
 use common\models\Lecture;
-use common\models\LectureSearch;
+use common\models\search\LectureSearch;
+use common\models\search\TeacherSearch;
 use common\models\Teacher;
-use common\models\TeacherSearch;
-use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -77,11 +78,11 @@ class LectureController extends Controller
 
                 $model->alghys = UploadedFile::getInstance($model, 'alghys');
                 $model->qurmet = UploadedFile::getInstance($model, 'qurmet');
-                if ($type == 'seminar') {
+                if (in_array($type, ['seminar', 'seminar_plat'])) {
                     $model->sertifikat = UploadedFile::getInstance($model, 'sertifikat');
                 }
 
-                foreach (array_filter(['alghys', 'qurmet', $type === 'seminar' ? 'sertifikat' : null]) as $attribute) {
+                foreach (array_filter(['alghys', 'qurmet', in_array($type, ['seminar', 'seminar_plat']) ? 'sertifikat' : null]) as $attribute) {
                     if ($model->$attribute) {
                             $directory = 'templates/' . $type . '/' . $model->title;
                             if (!is_dir($directory)) {
@@ -120,7 +121,21 @@ class LectureController extends Controller
 
     public function certificate($teacher, $lecture)
     {
-        $fileAttribute = $lecture->alghys ?? $lecture->qurmet ?? $lecture->sertifikat;
+        //which template?
+        $fileAttribute = null;
+        switch ($teacher->certificate) {
+            case 'алғыс':
+                $fileAttribute = $lecture->alghys;
+                break;
+            case 'құрмет':
+                $fileAttribute = $lecture->qurmet;
+                break;
+            case 'сертификат':
+                $fileAttribute = $lecture->sertifikat;
+                break;
+        }
+
+        //get ready
         $imgPath = Yii::getAlias("@webroot/") . $fileAttribute;
         $image = imagecreatefromjpeg($imgPath);
         $textColor = imagecolorallocate($image, 227, 41, 29);
@@ -138,29 +153,35 @@ class LectureController extends Controller
         $formattedId = str_pad($teacher->id, 5, '0', STR_PAD_LEFT);
         imagettftext($image, 28, 0, 1480, 1100, $textColor, $fontPath, $formattedId);
 
-        $directoryPath = 'certificates/' . $lecture->type . '/' . $lecture->title;
-        if (!is_dir($directoryPath)) {
-            mkdir($directoryPath, 0755, true);
+        //saving image
+        $directory = 'certificates/' . $lecture->type . '/' . $lecture->title;
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
         }
-        $newPath = $directoryPath . '/' . $teacher->name . '.jpg';
+        $newPath = $directory . '/' . $teacher->name . '.jpg';
         imagejpeg($image, $newPath);
         imagedestroy($image);
 
-        $certificate = new Certificate();
+        //saving to db
+        $certificate = new File();
         $certificate->lecture_id = $lecture->id;
         $certificate->teacher_id = $teacher->id;
+        $certificate->type = 'certificate';
         $certificate->path = $newPath;
         $certificate->save(false);
     }
 
     public function actionCertificates($id){
+        //find the culprit
         $lecture = Lecture::findOne($id);
-        $filePaths = Certificate::find()
+        $filePaths = File::find()
+            ->andWhere(['type' => 'certificate'])
             ->andWhere(['lecture_id' => $id])
             ->select('path')
             ->all();
         $zipFileName = $lecture->title . '.zip';
 
+        //zip files
         $zip = new \ZipArchive();
         $zipFilePath = Yii::getAlias('@webroot/uploads/' . $zipFileName);
         if ($zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
@@ -174,6 +195,8 @@ class LectureController extends Controller
                 Yii::error("File not found: $realPath");
             }
         }
+
+        //return
         $zip->close();
         return Yii::$app->response->sendFile($zipFilePath)->on(Response::EVENT_AFTER_SEND, function () use ($zipFilePath) {
             @unlink($zipFilePath);
@@ -182,53 +205,45 @@ class LectureController extends Controller
 
     public function actionJournal($id)
     {
-        $phpWord = new PhpWord();
+        //get ready
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        $section = $phpWord->addSection();
+        //headers
+        $sheet->setCellValue('A1', 'Name');
+        $sheet->setCellValue('B1', 'Organization');
+        $sheet->setCellValue('C1', 'Alghys');
+        $sheet->setCellValue('D1', 'Qurmet');
+        $sheet->setCellValue('E1', 'Sertifikat');
 
-        $tableStyle = [
-            'borderSize' => 6,
-            'borderColor' => '000000',
-            'cellMargin' => 50,
-            'width' => 100,
-            'tableLayout' => 'auto',
-        ];
-        $cellStyle = [
-            'valign' => 'center',
-        ];
-        $phpWord->addTableStyle('TeacherTable', $tableStyle);
-
-        $table = $section->addTable('TeacherTable');
-
-        $table->addRow();
-        $table->addCell(2000)->addText('Name');
-        $table->addCell(2000)->addText('Organization');
-        $table->addCell(2000)->addText('Alghys');
-        $table->addCell(2000)->addText('Qurmet');
-        $table->addCell(2000)->addText('Sertifikat');
-
-        $lecture = Lecture::findOne($id);
+        //the data
         $teachers = Teacher::find()->andWhere(['lecture_id' => $id])->all();
-
+        $row = 2;
         foreach ($teachers as $teacher) {
             $formattedId = str_pad($teacher->id, 5, '0', STR_PAD_LEFT);
-            $alghysCell = $lecture && $lecture->alghys ? $formattedId : '';
-            $qurmetCell = $lecture && $lecture->qurmet ? $formattedId : '';
-            $sertifikatCell = $lecture && $lecture->sertifikat ? $formattedId : '';
+            $alghysCell = $teacher->certificate == 'алғыс' ? $formattedId : '';
+            $qurmetCell = $teacher->certificate == 'құрмет'  ? $formattedId : '';
+            $sertifikatCell = $teacher->certificate == 'сертификат'  ? $formattedId : '';
 
-            $table->addRow();
-            $table->addCell(2000)->addText($teacher->name);
-            $table->addCell(2000)->addText($teacher->organization);
-            $table->addCell(2000)->addText($alghysCell);
-            $table->addCell(2000)->addText($qurmetCell);
-            $table->addCell(2000)->addText($sertifikatCell);
+            $sheet->setCellValue('A' . $row, $teacher->name);
+            $sheet->setCellValue('B' . $row, $teacher->organization);
+            $sheet->setCellValue('C' . $row, $alghysCell);
+            $sheet->setCellValue('D' . $row, $qurmetCell);
+            $sheet->setCellValue('E' . $row, $sertifikatCell);
+            $row++;
         }
 
-        $fileName = 'TeacherReport.docx';
-        $tempFilePath = Yii::getAlias('@webroot/uploads/' . $fileName);
-        $phpWord->save($tempFilePath, 'Word2007');
+        //saving
+        $lecture = Lecture::findOne($id);
+        $directory = 'journals/' . $lecture->type;
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        $filePath = $directory . '/' . $lecture->title . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
 
-        return Yii::$app->response->sendFile($tempFilePath);
+        return Yii::$app->response->sendFile($filePath);
     }
 
     public function actionUpdate($id)

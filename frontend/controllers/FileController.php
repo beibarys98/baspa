@@ -2,17 +2,16 @@
 
 namespace frontend\controllers;
 
-use common\models\Seminar;
-use common\models\SeminarSearch;
+use common\models\File;
+use common\models\search\FileSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
- * SeminarController implements the CRUD actions for Seminar model.
+ * FileController implements the CRUD actions for File model.
  */
-class SeminarController extends Controller
+class FileController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,13 +32,13 @@ class SeminarController extends Controller
     }
 
     /**
-     * Lists all Seminar models.
+     * Lists all File models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new SeminarSearch();
+        $searchModel = new FileSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -49,7 +48,7 @@ class SeminarController extends Controller
     }
 
     /**
-     * Displays a single Seminar model.
+     * Displays a single File model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -62,37 +61,17 @@ class SeminarController extends Controller
     }
 
     /**
-     * Creates a new Seminar model.
+     * Creates a new File model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Seminar();
+        $model = new File();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-
-                $model->alghys = UploadedFile::getInstance($model, 'alghys');
-                $model->qurmet = UploadedFile::getInstance($model, 'qurmet');
-                $model->sertifikat = UploadedFile::getInstance($model, 'sertifikat');
-
-                foreach (['alghys', 'qurmet', 'sertifikat'] as $attribute) {
-                    if ($model->$attribute) { // If a new file is uploaded
-
-                        $directory = 'templates/seminar/' . $model->title;
-                        if (!is_dir($directory)) {
-                            mkdir($directory, 0755, true);
-                        }
-
-                        $filePath = $directory . '/' . $attribute . '.' . $model->$attribute->extension;
-                        $model->$attribute->saveAs($filePath);
-                        $model->$attribute = $filePath; // Update to new file path
-                    }
-                }
-
-                $model->save(false);
-                return $this->redirect(['index']);
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -104,7 +83,7 @@ class SeminarController extends Controller
     }
 
     /**
-     * Updates an existing Seminar model.
+     * Updates an existing File model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -115,7 +94,7 @@ class SeminarController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -124,7 +103,7 @@ class SeminarController extends Controller
     }
 
     /**
-     * Deletes an existing Seminar model.
+     * Deletes an existing File model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -138,15 +117,15 @@ class SeminarController extends Controller
     }
 
     /**
-     * Finds the Seminar model based on its primary key value.
+     * Finds the File model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Seminar the loaded model
+     * @return File the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Seminar::findOne(['id' => $id])) !== null) {
+        if (($model = File::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
