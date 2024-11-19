@@ -46,7 +46,7 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function actionCreate($id)
+    public function actionCreate($id = '')
     {
         $model = new Teacher();
 

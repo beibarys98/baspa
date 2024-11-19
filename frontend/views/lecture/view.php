@@ -61,10 +61,10 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
         'organization',
     ];
 
-    if ($model->type == 'seminar_plat') {
+    if ($model->type == 'Семинар_Ақылы') {
 
         $columns[] = [
-            'label' => 'File',
+            'label' => 'Файл',
             'format' => 'raw',
             'value' => function ($model) {
                 $content = '';
@@ -107,10 +107,10 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
 
         ];
 
-    } elseif ($model->type == 'adistemelik_qural') {
+    } elseif ($model->type == 'Әдістемелік_Құрал') {
         $columns[] = [
             'headerOptions' => ['style' => 'width:15%;'],
-            'label' => 'File',
+            'label' => 'Файл',
             'format' => 'raw',
             'value' => function ($model) {
                 $content = '';
@@ -175,7 +175,7 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
     } else {
 
         $columns[] = [
-            'label' => 'File',
+            'label' => 'Файл',
             'format' => 'raw',
             'value' => function ($model) {
                 $certificate = File::find()

@@ -62,11 +62,11 @@ class Lecture extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'title' => Yii::t('app', 'Title'),
+            'title' => Yii::t('app', 'Атауы'),
             'type' => Yii::t('app', 'Type'),
-            'alghys' => Yii::t('app', 'Alghys'),
+            'alghys' => Yii::t('app', 'Алғыс Хат'),
             'qurmet' => Yii::t('app', 'Qurmet'),
-            'sertifikat' => Yii::t('app', 'Sertifikat'),
+            'sertifikat' => Yii::t('app', 'Сертификат'),
         ];
     }
 

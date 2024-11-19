@@ -41,15 +41,15 @@ AppAsset::register($this);
     $menuItems = [];
 
     if(Admin::findOne(Yii::$app->user->id)){
-        $menuItems[] = ['label' => 'BB', 'url' => ['/lecture/index', 'type' => 'bb']];
-        $menuItems[] = ['label' => 'Adistemelik', 'url' => ['/lecture/index', 'type' => 'adistemelik']];
-        $menuItems[] = ['label' => 'Seminar', 'url' => ['/lecture/index', 'type' => 'seminar']];
-        $menuItems[] = ['label' => 'Seminar_Plat', 'url' => ['/lecture/index', 'type' => 'seminar_plat']];
-        $menuItems[] = ['label' => 'Adistemelik_Qural', 'url' => ['/lecture/index', 'type' => 'adistemelik_qural']];
-        $menuItems[] = ['label' => 'Digital_Orta', 'url' => ['/lecture/index', 'type' => 'digital_orta']];
-        $menuItems[] = ['label' => 'MKSH', 'url' => ['/lecture/index', 'type' => 'mksh']];
-        $menuItems[] = ['label' => 'Ped_Sholu', 'url' => ['/lecture/index', 'type' => 'ped_sholu']];
-        $menuItems[] = ['label' => 'Site', 'url' => ['/lecture/index', 'type' => 'site']];
+        $menuItems[] = ['label' => 'ББ', 'url' => ['/lecture/index', 'type' => 'ББ']];
+        $menuItems[] = ['label' => 'Әдістемелік', 'url' => ['/lecture/index', 'type' => 'Әдістемелік']];
+        $menuItems[] = ['label' => 'Семинар', 'url' => ['/lecture/index', 'type' => 'Семинар']];
+        $menuItems[] = ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар_Ақылы']];
+        $menuItems[] = ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік_Құрал']];
+        $menuItems[] = ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық_Орта']];
+        $menuItems[] = ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'МКШ']];
+        $menuItems[] = ['label' => 'Пед_Шолу', 'url' => ['/lecture/index', 'type' => 'Пед_Шолу']];
+        $menuItems[] = ['label' => 'Сайт', 'url' => ['/lecture/index', 'type' => 'Сайт']];
     }
 
     echo Nav::widget([
@@ -60,7 +60,7 @@ AppAsset::register($this);
     if (!Yii::$app->user->isGuest) {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
             . Html::submitButton(
-                Yii::t('app', 'Выйти') . ' (' . Yii::$app->user->identity->username . ')',
+                Yii::t('app', 'Шығу') . ' (' . Yii::$app->user->identity->username . ')',
                 ['class' => 'btn btn-link logout text-decoration-none',
                     'style' => 'color: black']
             )
@@ -73,6 +73,7 @@ AppAsset::register($this);
 <main role="main" class="flex-shrink-0">
     <div class="container">
         <?= Breadcrumbs::widget([
+            'homeLink' => ['label' => 'Baspa', 'url' => Yii::$app->homeUrl],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>

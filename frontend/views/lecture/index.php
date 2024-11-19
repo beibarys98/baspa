@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create ' . $type), ['create', 'type' => $type], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Жаңа ' . $type), ['create', 'type' => $type], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'headerOptions' => ['style' => 'width:5%;'],
         ],
         [
+            'label' => 'Атауы',
             'attribute' => 'title',
             'format' => 'raw',
             'value' => function ($model) {
@@ -43,8 +44,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ];
 
-    if (!in_array($type, ['adistemelik_qural', 'digital_orta', 'mksh'])) {
+    if (in_array($type, ['ББ', 'Әдістемелік', 'Семинар', 'Семинар_Ақылы'])) {
         $columns[] = [
+            'label' => 'Алғыс Хат',
             'attribute' => 'alghys',
             'format' => 'raw',
             'value' => function ($model) {
@@ -53,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
 
         $columns[] = [
-            'label' => in_array($type, ['seminar', 'seminar_plat', 'mksh']) ? 'Diplom' : 'Qurmet',
+            'label' => in_array($type, ['Семинар', 'Семинар_Ақылы']) ? 'Диплом' : 'Құрмет Грамотасы',
             'attribute' => 'qurmet',
             'format' => 'raw',
             'value' => function ($model) {
@@ -62,8 +64,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
     }
 
-    if (in_array($type, ['seminar', 'seminar_plat'])) {
+    if (in_array($type, ['Семинар', 'Семинар_Ақылы'])) {
         $columns[] = [
+            'label' => 'Сертификат',
             'attribute' => 'sertifikat',
             'format' => 'raw',
             'value' => function ($model) {

@@ -9,6 +9,7 @@ $params = array_merge(
 return [
     'name' => 'Актюбинский областной методический центр',
     'timezone' => 'Asia/Almaty',
+    'language' => 'kz',
 
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),

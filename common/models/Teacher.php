@@ -10,7 +10,6 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string|null $organization
- * @property string|null $certificate
  * @property int|null $lecture_id
  *
  * @property File[] $files
@@ -50,10 +49,10 @@ class Teacher extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Name'),
-            'organization' => Yii::t('app', 'Organization'),
-            'certificate' => Yii::t('app', 'Certificate'),
-            'lecture_id' => Yii::t('app', 'Lecture ID'),
+            'name' => Yii::t('app', 'Есімі'),
+            'organization' => Yii::t('app', 'Мекемесі'),
+            'lecture_id' => Yii::t('app', 'Қатысады'),
+            'file' => 'Файл'
         ];
     }
 
