@@ -52,7 +52,7 @@ class LectureController extends Controller
 
     public function actionView($id){
 
-        $model = $this->findModel($id);
+        $lecture = $this->findModel($id);
 
         $searchModel = new TeacherSearch();
         $dataProvider = $searchModel->search(array_merge(
@@ -61,9 +61,9 @@ class LectureController extends Controller
         ));
 
         return $this->render('view', [
-            'model' => $model,
+            'lecture' => $lecture,
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider
         ]);
     }
 
@@ -78,11 +78,11 @@ class LectureController extends Controller
 
                 $model->alghys = UploadedFile::getInstance($model, 'alghys');
                 $model->qurmet = UploadedFile::getInstance($model, 'qurmet');
-                if (in_array($type, ['seminar', 'seminar_plat'])) {
+                if (in_array($type, ['Семинар', 'Семинар Ақылы'])) {
                     $model->sertifikat = UploadedFile::getInstance($model, 'sertifikat');
                 }
 
-                foreach (array_filter(['alghys', 'qurmet', in_array($type, ['seminar', 'seminar_plat']) ? 'sertifikat' : null]) as $attribute) {
+                foreach (array_filter(['alghys', 'qurmet', in_array($type, ['Семинар', 'Семинар Ақылы']) ? 'sertifikat' : null]) as $attribute) {
                     if ($model->$attribute) {
                             $directory = 'templates/' . $type . '/' . $model->title;
                             if (!is_dir($directory)) {
@@ -116,7 +116,7 @@ class LectureController extends Controller
             $this->certificate($teacher, $lecture);
         }
 
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(['view', 'id' => $id,]);
     }
 
     public function certificate($teacher, $lecture)
@@ -210,11 +210,11 @@ class LectureController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         //headers
-        $sheet->setCellValue('A1', 'Name');
-        $sheet->setCellValue('B1', 'Organization');
-        $sheet->setCellValue('C1', 'Alghys');
-        $sheet->setCellValue('D1', 'Qurmet');
-        $sheet->setCellValue('E1', 'Sertifikat');
+        $sheet->setCellValue('A1', 'Есімі');
+        $sheet->setCellValue('B1', 'Мекемесі');
+        $sheet->setCellValue('C1', 'Алғыс Хат');
+        $sheet->setCellValue('D1', 'Құрмет Грамотасы / Диплом');
+        $sheet->setCellValue('E1', 'Сертификат');
 
         //the data
         $teachers = Teacher::find()->andWhere(['lecture_id' => $id])->all();
@@ -261,9 +261,11 @@ class LectureController extends Controller
 
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $lecture = Lecture::findOne($id);
+        $type = $lecture->type;
+        $lecture->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'type' => $type ]);
     }
 
     protected function findModel($id)

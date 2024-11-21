@@ -11,16 +11,16 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
-/** @var $model */
+/** @var $lecture */
 /** @var TeacherSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = $model->title;
+$this->title = $lecture->title;
 
 // Add breadcrumbs
 $this->params['breadcrumbs'][] = [
-    'label' => $model->type,
-    'url' => ['/lecture/index', 'type' => $model->type], // Link to lecture/index with type as a parameter
+    'label' => $lecture->type,
+    'url' => ['/lecture/index', 'type' => $lecture->type], // Link to lecture/index with type as a parameter
 ];
 $this->params['breadcrumbs'][] = $this->title; // Current page
 ?>
@@ -29,21 +29,21 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?=
-    Html::a('Мұғалімдер қосу', ['teacher/create', 'id' => $model->id], ['class' => 'btn btn-secondary mb-3'])
+    Html::a('Мұғалімдер қосу', ['teacher/create', 'id' => $lecture->id], ['class' => 'btn btn-secondary mb-3'])
     ?>
 
-    <?php if (!in_array($model->type, ['adistemelik_qural', 'digital_orta', 'mksh'])):?>
+    <?php if (in_array($lecture->type, ['Білім Басқармасы', 'Әдістемелік Орталық', 'Семинар', 'Семинар Ақылы'])):?>
 
         <?=
-        Html::a('Марапаттау', ['present', 'id' => $model->id], ['class' => 'btn btn-success mb-3'])
+        Html::a('Марапаттау', ['present', 'id' => $lecture->id], ['class' => 'btn btn-success mb-3'])
         ?>
 
         <?=
-        Html::a('Жуктеп алу', ['certificates', 'id' => $model->id], ['class' => 'btn btn-warning mb-3'])
+        Html::a('Жуктеп алу', ['certificates', 'id' => $lecture->id], ['class' => 'btn btn-warning mb-3'])
         ?>
 
         <?=
-        Html::a('Журнал', ['journal', 'id' => $model->id], ['class' => 'btn btn-danger mb-3'])
+        Html::a('Журнал', ['journal', 'id' => $lecture->id], ['class' => 'btn btn-danger mb-3'])
         ?>
 
     <?php endif; ?>
@@ -61,140 +61,110 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
         'organization',
     ];
 
-    if ($model->type == 'Семинар_Ақылы') {
+    $columns[] = [
+        'headerOptions' => ['style' => 'width:15%;'],
+        'label' => 'Файл',
+        'format' => 'raw',
+        'value' => function ($model) use ($lecture) {
+            $content = '';
 
-        $columns[] = [
-            'label' => 'Файл',
-            'format' => 'raw',
-            'value' => function ($model) {
-                $content = '';
-
-                $payment = File::find()
-                    ->andWhere(['type' => 'payment'])
+            if(in_array($lecture->type, ['Семинар Ақылы', 'Әдістемелік Құрал', 'Электрондық Орта',
+                'Заманауи Білім Берудегі ШЖМ', 'Педагогикалық Шолу', 'Сайт'])){
+                $receipt = File::find()
+                    ->andWhere(['type' => 'receipt'])
                     ->andWhere(['lecture_id' => $model->lecture_id])
                     ->andWhere(['teacher_id' => $model->id])
                     ->one();
-
-                if ($payment && $payment->path) {
-                    $content .= Html::a('Квитанция', [$payment->path], [
+                if ($receipt) {
+                    $content .= Html::a('Квитанция', [$receipt->path], [
                         'data-pjax' => '0',
                         'target' => '_blank',
                     ]);
                 } else {
-                    $content .= '<div class="d-flex justify-content-between">
-                        <span>---</span>' . Html::a('+',
-                            ['/payment/create', 'teacher_id' => $model->id, 'lecture_id' => $model->lecture_id],
-                            ['class' => 'btn btn-secondary btn-sm'])
-                        . '</div>';
+                    $content .= 'Квитанция ' . Html::a('жүктеу',
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'receipt']);
                 }
 
-                $certificate = File::find()
-                    ->andWhere(['type' => 'certificate'])
-                    ->andWhere(['lecture_id' => $model->lecture_id])
-                    ->andWhere(['teacher_id' => $model->id])
-                    ->one();
-                if ($certificate) {
-                    $content .= Html::a('Марапат', [$certificate->path], [
-                        'data-pjax' => '0',
-                        'target' => '_blank',
-                    ]);
-                } else {
-                    $content .= '---';
-                }
-
-                return $content;
+                $content .= '<br>';
             }
 
-        ];
-
-    } elseif ($model->type == 'Әдістемелік_Құрал') {
-        $columns[] = [
-            'headerOptions' => ['style' => 'width:15%;'],
-            'label' => 'Файл',
-            'format' => 'raw',
-            'value' => function ($model) {
-                $content = '';
-
-                $payment = File::find()
-                    ->andWhere(['type' => 'payment'])
+            if(in_array($lecture->type, ['Әдістемелік Құрал', 'Электрондық Орта',
+                'Заманауи Білім Берудегі ШЖМ', 'Педагогикалық Шолу', 'Сайт'])) {
+                $opinion1 = File::find()
+                    ->andWhere(['type' => 'opinion1'])
                     ->andWhere(['lecture_id' => $model->lecture_id])
                     ->andWhere(['teacher_id' => $model->id])
                     ->one();
-                if ($payment && $payment->path) {
-                    $content .= Html::a('Квитанция', [$payment->path], [
-                            'data-pjax' => '0',
-                            'target' => '_blank',
-                        ]) . '<br>';
+                if ($opinion1) {
+                    $content .= Html::a('Пікір #1', [$opinion1->path], [
+                        'data-pjax' => '0',
+                        'target' => '_blank',
+                    ]);
                 } else {
-                    $content .= '<div class="d-flex justify-content-between">
-                        <span>---</span>' . Html::a('+',
-                            ['/payment/create', 'teacher_id' => $model->id, 'lecture_id' => $model->lecture_id],
-                            ['class' => 'btn btn-primary btn-sm'])
-                        . '</div>';
+                    $content .= 'Пікір #1 ' . Html::a('жүктеу',
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion1']);
                 }
 
-                $opinion = File::find()
-                    ->andWhere(['type' => 'opinion'])
+                $content .= '<br>';
+            }
+
+            if($lecture->type == 'Әдістемелік Құрал'){
+                $opinion2 = File::find()
+                    ->andWhere(['type' => 'opinion2'])
                     ->andWhere(['lecture_id' => $model->lecture_id])
                     ->andWhere(['teacher_id' => $model->id])
                     ->one();
-                if ($opinion) {
-                    $content .= Html::a('Пікір #1', ['view-opinion', 'id' => $opinion->id], [
-                            'data-pjax' => '0',
-                            'target' => '_blank',
-                        ]) . '<br>';
+                if ($opinion2) {
+                    $content .= Html::a('Пікір #2', [$opinion2->path], [
+                        'data-pjax' => '0',
+                        'target' => '_blank',
+                    ]);
                 } else {
-                    $content .= '<div class="d-flex justify-content-between mt-1">
-                        <span>---</span>' . Html::a('+',
-                            ['/opinion/create', 'teacher_id' => $model->id, 'lecture_id' => $model->lecture_id],
-                            ['class' => 'btn btn-primary btn-sm'])
-                        . '</div>';
+                    $content .= 'Пікір #2 ' . Html::a('жүктеу',
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion2']);
                 }
 
+                $content .= '<br>';
+            }
+
+            if(in_array($lecture->type, ['Әдістемелік Құрал', 'Электрондық Орта',
+                'Заманауи Білім Берудегі ШЖМ', 'Педагогикалық Шолу', 'Сайт'])) {
                 $material = File::find()
                     ->andWhere(['type' => 'material'])
                     ->andWhere(['lecture_id' => $model->lecture_id])
                     ->andWhere(['teacher_id' => $model->id])
                     ->one();
                 if ($material) {
-                    $content .= Html::a('Материал', ['view-material', 'id' => $material->id], [
-                            'data-pjax' => '0',
-                            'target' => '_blank',
-                        ]) . '<br>';
-                } else {
-                    $content .= '<div class="d-flex justify-content-between mt-1">
-                        <span>---</span>' . Html::a('+',
-                        ['/material/create', 'teacher_id' => $model->id, 'lecture_id' => $model->lecture_id],
-                        ['class' => 'btn btn-primary btn-sm'])
-                        . '</div>';
-                }
-
-                return $content;
-            }
-        ];
-    } else {
-
-        $columns[] = [
-            'label' => 'Файл',
-            'format' => 'raw',
-            'value' => function ($model) {
-                $certificate = File::find()
-                    ->andWhere(['type' => 'certificate'])
-                    ->andWhere(['lecture_id' => $model->lecture_id])
-                    ->andWhere(['teacher_id' => $model->id])
-                    ->one();
-
-                if ($certificate && $certificate->path) {
-                    return Html::a('Марапат', [$certificate->path], [
+                    $content .= Html::a('Материал', [$material->path], [
                         'data-pjax' => '0',
                         'target' => '_blank',
                     ]);
                 } else {
-                    return '---';
+                    $content .= 'Материал ' . Html::a('жүктеу',
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'material']);
                 }
+
+                $content .= '<br>';
             }
-        ];
-    }
+
+            $certificate = File::find()
+                ->andWhere(['type' => 'certificate'])
+                ->andWhere(['lecture_id' => $model->lecture_id])
+                ->andWhere(['teacher_id' => $model->id])
+                ->one();
+
+            if ($certificate) {
+                $content .= Html::a('Марапат', [$certificate->path], [
+                    'data-pjax' => '0',
+                    'target' => '_blank',
+                ]);
+            } else {
+                $content .= '---';
+            }
+
+            return $content;
+        }
+    ];
 
     $columns[] = [
         'class' => ActionColumn::className(),

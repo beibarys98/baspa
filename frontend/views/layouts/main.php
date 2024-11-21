@@ -41,14 +41,14 @@ AppAsset::register($this);
     $menuItems = [];
 
     if(Admin::findOne(Yii::$app->user->id)){
-        $menuItems[] = ['label' => 'ББ', 'url' => ['/lecture/index', 'type' => 'ББ']];
-        $menuItems[] = ['label' => 'Әдістемелік', 'url' => ['/lecture/index', 'type' => 'Әдістемелік']];
+        $menuItems[] = ['label' => 'ББ', 'url' => ['/lecture/index', 'type' => 'Білім Басқармасы']];
+        $menuItems[] = ['label' => 'Әдістемелік_Орталық', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Орталық']];
         $menuItems[] = ['label' => 'Семинар', 'url' => ['/lecture/index', 'type' => 'Семинар']];
-        $menuItems[] = ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар_Ақылы']];
-        $menuItems[] = ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік_Құрал']];
-        $menuItems[] = ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық_Орта']];
-        $menuItems[] = ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'МКШ']];
-        $menuItems[] = ['label' => 'Пед_Шолу', 'url' => ['/lecture/index', 'type' => 'Пед_Шолу']];
+        $menuItems[] = ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар Ақылы']];
+        $menuItems[] = ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Құрал']];
+        $menuItems[] = ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық Орта']];
+        $menuItems[] = ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'Заманауи Білім Берудегі ШЖМ']];
+        $menuItems[] = ['label' => 'Педагогикалық_Шолу', 'url' => ['/lecture/index', 'type' => 'Педагогикалық Шолу']];
         $menuItems[] = ['label' => 'Сайт', 'url' => ['/lecture/index', 'type' => 'Сайт']];
     }
 

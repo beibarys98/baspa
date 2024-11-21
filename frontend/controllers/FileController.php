@@ -3,10 +3,13 @@
 namespace frontend\controllers;
 
 use common\models\File;
+use common\models\Lecture;
 use common\models\search\FileSearch;
+use common\models\Teacher;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * FileController implements the CRUD actions for File model.
@@ -65,13 +68,34 @@ class FileController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($lecture_id, $teacher_id, $type)
     {
         $model = new File();
+        $lecture = Lecture::findOne($lecture_id);
+        $teacher = Teacher::findOne($teacher_id);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+
+                $model->file = UploadedFile::getInstance($model, 'file');
+
+                if ($model->file) {
+                    $directory = $type . 's/' . $lecture->type . '/' . $lecture->title;
+                    if (!is_dir($directory)) {
+                        mkdir($directory, 0755, true);
+                    }
+
+                    $filePath = $directory . '/' . $teacher->name . '.' . $model->file->extension;
+                    $model->file->saveAs($filePath);
+
+                    $model->lecture_id = $lecture_id;
+                    $model->teacher_id = $teacher_id;
+                    $model->type = $type;
+                    $model->path = $filePath;
+                }
+
+                $model->save(false);
+                return $this->redirect(['lecture/view', 'id' => $lecture_id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -79,6 +103,8 @@ class FileController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'lecture' => $lecture,
+            'teacher' => $teacher,
         ]);
     }
 

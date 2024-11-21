@@ -18,6 +18,8 @@ use Yii;
  */
 class File extends \yii\db\ActiveRecord
 {
+    public $file;
+
     /**
      * {@inheritdoc}
      */
@@ -37,6 +39,8 @@ class File extends \yii\db\ActiveRecord
             [['type', 'path'], 'string', 'max' => 255],
             [['lecture_id'], 'exist', 'skipOnError' => true, 'targetClass' => Lecture::class, 'targetAttribute' => ['lecture_id' => 'id']],
             [['teacher_id'], 'exist', 'skipOnError' => true, 'targetClass' => Teacher::class, 'targetAttribute' => ['teacher_id' => 'id']],
+
+            ['file', 'file', 'skipOnEmpty' => 'false', 'extensions' => ['pdf', 'docx']],
         ];
     }
 
@@ -51,6 +55,7 @@ class File extends \yii\db\ActiveRecord
             'teacher_id' => Yii::t('app', 'Teacher ID'),
             'type' => Yii::t('app', 'Type'),
             'path' => Yii::t('app', 'Path'),
+            'file' => Yii::t('app', 'Файл'),
         ];
     }
 

@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ];
 
-    if (in_array($type, ['ББ', 'Әдістемелік', 'Семинар', 'Семинар_Ақылы'])) {
+    if (in_array($type, ['Білім Басқармасы', 'Әдістемелік Орталық', 'Семинар', 'Семинар Ақылы'])) {
         $columns[] = [
             'label' => 'Алғыс Хат',
             'attribute' => 'alghys',
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
 
         $columns[] = [
-            'label' => in_array($type, ['Семинар', 'Семинар_Ақылы']) ? 'Диплом' : 'Құрмет Грамотасы',
+            'label' => in_array($type, ['Семинар', 'Семинар Ақылы']) ? 'Диплом' : 'Құрмет Грамотасы',
             'attribute' => 'qurmet',
             'format' => 'raw',
             'value' => function ($model) {
@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
     }
 
-    if (in_array($type, ['Семинар', 'Семинар_Ақылы'])) {
+    if (in_array($type, ['Семинар', 'Семинар Ақылы'])) {
         $columns[] = [
             'label' => 'Сертификат',
             'attribute' => 'sertifikat',
