@@ -60,14 +60,14 @@ AppAsset::register($this);
         // First row
         Html::tag('div',
             Nav::widget([
-                'options' => ['class' => 'navbar-nav'],
+                'options' => ['class' => 'navbar-nav gap-3'], // Add gap between items
                 'items' => $firstRowItems,
             ])
         ) .
         // Second row
         Html::tag('div',
             Nav::widget([
-                'options' => ['class' => 'navbar-nav'], // Adjust alignment
+                'options' => ['class' => 'navbar-nav gap-3'], // Add gap between items
                 'items' => $secondRowItems,
             ])
         ),

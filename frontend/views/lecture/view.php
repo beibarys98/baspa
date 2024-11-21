@@ -79,7 +79,9 @@ $this->params['breadcrumbs'][] = $lecture->title;
                     ]);
                 } else {
                     $content .= 'Квитанция ' . Html::a('жүктеу',
-                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'receipt']);
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'receipt'],
+                            ['class' => 'float-end']
+                        );
                 }
 
                 $content .= '<br>';
@@ -98,7 +100,9 @@ $this->params['breadcrumbs'][] = $lecture->title;
                     ]);
                 } else {
                     $content .= 'Пікір #1 ' . Html::a('жүктеу',
-                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion1']);
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion1'],
+                            ['class' => 'float-end']
+                        );
                 }
 
                 $content .= '<br>';
@@ -117,7 +121,9 @@ $this->params['breadcrumbs'][] = $lecture->title;
                     ]);
                 } else {
                     $content .= 'Пікір #2 ' . Html::a('жүктеу',
-                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion2']);
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'opinion2'],
+                            ['class' => 'float-end']
+                        );
                 }
 
                 $content .= '<br>';
@@ -137,7 +143,9 @@ $this->params['breadcrumbs'][] = $lecture->title;
                     ]);
                 } else {
                     $content .= 'Материал ' . Html::a('жүктеу',
-                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'material']);
+                            ['/file/create', 'lecture_id' => $model->lecture_id, 'teacher_id' => $model->id, 'type' => 'material'],
+                            ['class' => 'float-end']
+                        );
                 }
 
                 $content .= '<br>';

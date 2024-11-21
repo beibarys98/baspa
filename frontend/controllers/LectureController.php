@@ -263,6 +263,21 @@ class LectureController extends Controller
     {
         $lecture = Lecture::findOne($id);
         $type = $lecture->type;
+
+        $teachers = Teacher::find()->andWhere(['lecture_id' => $id])->all();
+        foreach ($teachers as $teacher) {
+            $teacher->delete();
+        }
+
+        $files = File::find()->where(['lecture_id' => $id])->all();
+        foreach ($files as $file) {
+            $filePath = Yii::getAlias('@webroot') . $file->path;
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $file->delete();
+        }
+
         $lecture->delete();
 
         return $this->redirect(['index', 'type' => $type ]);
