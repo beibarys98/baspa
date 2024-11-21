@@ -8,18 +8,18 @@ use yii\bootstrap5\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 /** @var $lecture */
 /** @var $teacher */
+/** @var $type */
 
-$this->title = 'Квитанция: ' . $teacher->name;
+$this->title = $teacher->name;
 
-// Add breadcrumbs
 $this->params['breadcrumbs'][] = [
     'label' => $lecture->type,
-    'url' => ['/lecture/index', 'type' => $lecture->type], // Link to lecture/index with type as a parameter
+    'url' => ['/lecture/index', 'type' => $lecture->type],
 ];
 
 $this->params['breadcrumbs'][] = [
-    'label' => $lecture->title, // Replace with the lecture's specific attribute or title
-    'url' => ['/lecture/view', 'id' => $lecture->id], // Link to lecture/view with lecture_id as a parameter
+    'label' => $lecture->title,
+    'url' => ['/lecture/view', 'id' => $lecture->id],
 ];
 
 $this->params['breadcrumbs'][] = $this->title; // Current page
@@ -27,6 +27,20 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
 ?>
 
 <div class="file-form">
+
+    <?php
+    $headings = [
+        'receipt' => 'Квитанция',
+        'opinion1' => 'Пікір #1',
+        'opinion2' => 'Пікір #2',
+        'material' => 'Материал',
+    ];
+
+    $displayTitle = $headings[$type] ?? 'Unknown Type';
+    ?>
+
+    <h1><?= $displayTitle ?></h1>
+
 
     <?php $form = ActiveForm::begin(); ?>
 

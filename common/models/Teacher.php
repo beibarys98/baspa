@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string|null $organization
+ * @property string|null $certificate
  * @property int|null $lecture_id
  *
  * @property File[] $files

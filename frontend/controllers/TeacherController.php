@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Lecture;
 use common\models\search\TeacherSearch;
 use common\models\Teacher;
 use PhpOffice\PhpWord\IOFactory;
@@ -46,13 +47,9 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function actionCreate($id = '')
+    public function actionCreate($id)
     {
         $model = new Teacher();
-
-        if($id){
-            $model->lecture_id = $id;
-        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -69,15 +66,11 @@ class TeacherController extends Controller
                         . '.' . $model->file->extension;
                     $model->file->saveAs($filePath);
                     $data = $this->parseDocx($filePath);
-                    $this->storeTeacherData($data, $model->lecture_id);
+                    $this->storeTeacherData($data, $id);
                     unlink($filePath);
                 }
 
-                if($id){
-                    return $this->redirect(['lecture/view', 'id' => $id]);
-                }
-
-                return $this->redirect(['index']);
+                return $this->redirect(['lecture/view', 'id' => $id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -85,6 +78,7 @@ class TeacherController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'lecture' => Lecture::findOne($id),
         ]);
     }
 

@@ -15,14 +15,16 @@ use yii\widgets\Pjax;
 /** @var $type */
 
 $this->title = Yii::t('app', $type);
-$this->params['breadcrumbs'][] = $this->title;
+
+$this->params['breadcrumbs'][] = ['label' => $type];
+
 ?>
 <div class="bb-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Жаңа ' . $type), ['create', 'type' => $type], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Жаңа'), ['create', 'type' => $type], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>

@@ -1,28 +1,25 @@
 <?php
 
-use common\models\Lecture;
-use kartik\select2\Select2;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\Teacher $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var $lecture */
+
+$this->title = 'Мұғалімдер қосу';
+
+$this->params['breadcrumbs'][] = ['label' => $lecture->type, 'url' => ['/lecture/index', 'type' => $lecture->type]];
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
 <div class="teacher-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $form->field($model, 'lecture_id')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(Lecture::find()->all(), 'id', 'title'), // All data from the Lecture model
-        'options' => ['placeholder' => 'Select Lecture', 'id' => 'seminar-id-dropdown'],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'width' => '100%',
-        ],
-    ]) ?>
+    <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'file')->fileInput() ?>
 

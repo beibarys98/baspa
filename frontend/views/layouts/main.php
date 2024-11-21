@@ -38,24 +38,41 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm'
         ],
     ]);
-    $menuItems = [];
 
-    if(Admin::findOne(Yii::$app->user->id)){
-        $menuItems[] = ['label' => 'ББ', 'url' => ['/lecture/index', 'type' => 'Білім Басқармасы']];
-        $menuItems[] = ['label' => 'Әдістемелік_Орталық', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Орталық']];
-        $menuItems[] = ['label' => 'Семинар', 'url' => ['/lecture/index', 'type' => 'Семинар']];
-        $menuItems[] = ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар Ақылы']];
-        $menuItems[] = ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Құрал']];
-        $menuItems[] = ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық Орта']];
-        $menuItems[] = ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'Заманауи Білім Берудегі ШЖМ']];
-        $menuItems[] = ['label' => 'Педагогикалық_Шолу', 'url' => ['/lecture/index', 'type' => 'Педагогикалық Шолу']];
-        $menuItems[] = ['label' => 'Сайт', 'url' => ['/lecture/index', 'type' => 'Сайт']];
-    }
+    // Divide menu items into two groups
+    $firstRowItems = [
+        ['label' => 'Білім_Басқармасы', 'url' => ['/lecture/index', 'type' => 'Білім Басқармасы']],
+        ['label' => 'Әдістемелік_Орталық', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Орталық']],
+        ['label' => 'Семинар', 'url' => ['/lecture/index', 'type' => 'Семинар']],
+        ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар Ақылы']],
+    ];
 
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0 ms-2'],
-        'items' => $menuItems,
-    ]);
+    $secondRowItems = [
+        ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Құрал']],
+        ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық Орта']],
+        ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'Заманауи Білім Берудегі ШЖМ']],
+        ['label' => 'Педагогикалық_Шолу', 'url' => ['/lecture/index', 'type' => 'Педагогикалық Шолу']],
+        ['label' => 'Сайт', 'url' => ['/lecture/index', 'type' => 'Сайт']],
+    ];
+
+    // Wrap the rows in a container
+    echo Html::tag('div',
+        // First row
+        Html::tag('div',
+            Nav::widget([
+                'options' => ['class' => 'navbar-nav'],
+                'items' => $firstRowItems,
+            ])
+        ) .
+        // Second row
+        Html::tag('div',
+            Nav::widget([
+                'options' => ['class' => 'navbar-nav'], // Adjust alignment
+                'items' => $secondRowItems,
+            ])
+        ),
+        ['class' => 'w-100 ms-5']
+    );
 
     if (!Yii::$app->user->isGuest) {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])

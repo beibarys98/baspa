@@ -102,6 +102,7 @@ class FileController extends Controller
         }
 
         return $this->render('create', [
+            'type' => $type,
             'model' => $model,
             'lecture' => $lecture,
             'teacher' => $teacher,

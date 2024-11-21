@@ -17,12 +17,9 @@ use yii\widgets\Pjax;
 
 $this->title = $lecture->title;
 
-// Add breadcrumbs
-$this->params['breadcrumbs'][] = [
-    'label' => $lecture->type,
-    'url' => ['/lecture/index', 'type' => $lecture->type], // Link to lecture/index with type as a parameter
-];
-$this->params['breadcrumbs'][] = $this->title; // Current page
+$this->params['breadcrumbs'][] = ['label' => $lecture->type, 'url' => ['/lecture/index', 'type' => $lecture->type]];
+$this->params['breadcrumbs'][] = $lecture->title;
+
 ?>
 <div class="teacher-index">
 
@@ -88,8 +85,7 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
                 $content .= '<br>';
             }
 
-            if(in_array($lecture->type, ['Әдістемелік Құрал', 'Электрондық Орта',
-                'Заманауи Білім Берудегі ШЖМ', 'Педагогикалық Шолу', 'Сайт'])) {
+            if(in_array($lecture->type, ['Әдістемелік Құрал', 'Электрондық Орта'])) {
                 $opinion1 = File::find()
                     ->andWhere(['type' => 'opinion1'])
                     ->andWhere(['lecture_id' => $model->lecture_id])
@@ -127,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
                 $content .= '<br>';
             }
 
-            if(in_array($lecture->type, ['Әдістемелік Құрал', 'Электрондық Орта',
+            if(in_array($lecture->type, ['Әдістемелік Құрал',
                 'Заманауи Білім Берудегі ШЖМ', 'Педагогикалық Шолу', 'Сайт'])) {
                 $material = File::find()
                     ->andWhere(['type' => 'material'])
@@ -147,19 +143,22 @@ $this->params['breadcrumbs'][] = $this->title; // Current page
                 $content .= '<br>';
             }
 
-            $certificate = File::find()
-                ->andWhere(['type' => 'certificate'])
-                ->andWhere(['lecture_id' => $model->lecture_id])
-                ->andWhere(['teacher_id' => $model->id])
-                ->one();
+            if(in_array($lecture->type, ['Білім Басқармасы', 'Әдістемелік Орталық',
+                'Семинар', 'Семинар Ақылы'])) {
+                $certificate = File::find()
+                    ->andWhere(['type' => 'certificate'])
+                    ->andWhere(['lecture_id' => $model->lecture_id])
+                    ->andWhere(['teacher_id' => $model->id])
+                    ->one();
 
-            if ($certificate) {
-                $content .= Html::a('Марапат', [$certificate->path], [
-                    'data-pjax' => '0',
-                    'target' => '_blank',
-                ]);
-            } else {
-                $content .= '---';
+                if ($certificate) {
+                    $content .= Html::a('Марапат', [$certificate->path], [
+                        'data-pjax' => '0',
+                        'target' => '_blank',
+                    ]);
+                } else {
+                    $content .= 'Марапат';
+                }
             }
 
             return $content;

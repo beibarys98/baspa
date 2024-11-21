@@ -7,15 +7,16 @@ use yii\bootstrap5\ActiveForm;
 /** @var common\models\Lecture $model */
 /** @var yii\widgets\ActiveForm $form */
 
-$this->title = Yii::t('app', $model->type);
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', $model->type), // Translated model->type
-    'url' => ['index'] // Change 'index' to the appropriate URL if needed
-];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Жаңа ' . $model->type); // Translated "Create"
+$this->title = 'Жаңа';
+
+$this->params['breadcrumbs'][] = ['label' => $model->type, 'url' => ['/lecture/index', 'type' => $model->type]];
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
 <div class="bb-form">
+
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <?php $form = ActiveForm::begin(); ?>
 
