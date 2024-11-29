@@ -32,22 +32,20 @@ AppAsset::register($this);
 <header>
     <?php
     NavBar::begin([
-        'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px; margin-right:10px;']) . Yii::t('app', 'Baspa'),
-        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/teacher/index') : Yii::$app->homeUrl,
+        'brandLabel' => Html::img('@web/images/adort2.png', ['alt' => 'Logo', 'style' => 'height:30px;']) . Yii::t('app', 'Baspa'),
+        'brandUrl' => Admin::findOne(Yii::$app->user->id) ? Url::to('/methodist/index') : Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm'
         ],
     ]);
 
-    // Divide menu items into two groups
-    $firstRowItems = [
-        ['label' => 'Білім_Басқармасы', 'url' => ['/lecture/index', 'type' => 'Білім Басқармасы']],
+    $user = \common\models\User::findOne(Yii::$app->user->id);
+
+    $items = [
+        ['label' => 'ББ', 'url' => ['/lecture/index', 'type' => 'Білім Басқармасы']],
         ['label' => 'Әдістемелік_Орталық', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Орталық']],
         ['label' => 'Семинар', 'url' => ['/lecture/index', 'type' => 'Семинар']],
         ['label' => 'Семинар_Ақылы', 'url' => ['/lecture/index', 'type' => 'Семинар Ақылы']],
-    ];
-
-    $secondRowItems = [
         ['label' => 'Әдістемелік_Құрал', 'url' => ['/lecture/index', 'type' => 'Әдістемелік Құрал']],
         ['label' => 'Электрондық_Орта', 'url' => ['/lecture/index', 'type' => 'Электрондық Орта']],
         ['label' => 'МКШ', 'url' => ['/lecture/index', 'type' => 'Заманауи Білім Берудегі ШЖМ']],
@@ -55,24 +53,22 @@ AppAsset::register($this);
         ['label' => 'Сайт', 'url' => ['/lecture/index', 'type' => 'Сайт']],
     ];
 
-    // Wrap the rows in a container
-    echo Html::tag('div',
-        // First row
-        Html::tag('div',
-            Nav::widget([
-                'options' => ['class' => 'navbar-nav gap-3'], // Add gap between items
-                'items' => $firstRowItems,
-            ])
-        ) .
-        // Second row
-        Html::tag('div',
-            Nav::widget([
-                'options' => ['class' => 'navbar-nav gap-3'], // Add gap between items
-                'items' => $secondRowItems,
-            ])
-        ),
-        ['class' => 'w-100 ms-5']
-    );
+    if (Admin::findOne(Yii::$app->user->id)) {
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav me-auto'],
+            'items' => $items
+        ]);
+    } elseif ($user && $user->methodist) {
+        $allowedTypes = explode(',', $user->methodist->type);
+        $filteredItems = array_filter($items, function ($item) use ($allowedTypes) {
+            return in_array($item['url']['type'], $allowedTypes);
+        });
+
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav me-auto'],
+            'items' => $filteredItems,
+        ]);
+    }
 
     if (!Yii::$app->user->isGuest) {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])

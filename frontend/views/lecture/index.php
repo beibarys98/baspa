@@ -89,6 +89,7 @@ $this->params['breadcrumbs'][] = ['label' => $type];
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' => ['class' => 'table table-hover'],
         'pager' => [
             'class' => LinkPager::class,
         ],

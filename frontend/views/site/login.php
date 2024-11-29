@@ -9,8 +9,8 @@ use yii\bootstrap5\ActiveForm;
 
 $this->title = Yii::$app->name;
 ?>
-<div class="site-login mt-1">
-    <div style="margin: 0 auto; width: 500px;">
+<div class="site-login">
+    <div style="margin: 150px auto; width: 500px;">
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
             <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => 'Логин'])->label(false) ?>

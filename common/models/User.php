@@ -43,11 +43,8 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['username', 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Бұл логин бос емес!'],
             ['username', 'string', 'min' => 2, 'max' => 255],
-
-            ['username', 'match', 'pattern' => '/^\d+$/', 'message' => 'Username can only contain numbers.'],
-            ['username', 'string', 'length' => 12, 'message' => 'Username must be exactly 12 characters long.'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
@@ -203,4 +200,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+    public function getMethodist()
+    {
+        return $this->hasOne(Methodist::class, ['user_id' => 'id']);
+    }
+
 }
